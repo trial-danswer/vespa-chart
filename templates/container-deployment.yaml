@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vespa.fullname" . }}-container
+  labels:
+    {{- include "vespa.labels" . | nindent 4 }}
+    app: container
+spec:
+  replicas: {{ .Values.replicaCounts.container }}
+  selector:
+    matchLabels:
+      app: container
+  template:
+    metadata:
+      labels:
+        app: container
+    spec:
+      containers:
+        - name: container
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              /opt/vespa/bin/vespa-start-services && \
+              tail -f /dev/null
+          env:
+            - name: VESPA_CONFIGSERVERS
+              value: "{{ include "vespa.fullname" . }}-configserver:19071"
+          ports:
+            - containerPort: 8080
+              name: http
+

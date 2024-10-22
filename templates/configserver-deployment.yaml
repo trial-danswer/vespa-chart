@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vespa.fullname" . }}-configserver
+  labels:
+    {{- include "vespa.labels" . | nindent 4 }}
+    app: configserver
+spec:
+  replicas: {{ .Values.replicaCounts.configserver }}
+  selector:
+    matchLabels:
+      app: configserver
+  template:
+    metadata:
+      labels:
+        app: configserver
+    spec:
+      containers:
+        - name: configserver
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              /opt/vespa/bin/vespa-start-configserver && \
+              tail -f /dev/null
+          ports:
+            - containerPort: 19071
+              name: configserver
+

@@ -1,0 +1,22 @@
+# values.yaml
+replicaCounts:
+  configserver: 1
+  container: 1
+
+image:
+  repository: vespaengine/vespa
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: LoadBalancer
+  port: 8080
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
